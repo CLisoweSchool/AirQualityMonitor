@@ -12,3 +12,4 @@ def air_quality_data(request):
         "status": "Good"
     }
     return Response(sample_data)
+
