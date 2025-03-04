@@ -32,8 +32,30 @@ def air_quality_data(request):
 def receive_sensor_data(request):
     serializer = SensorDataSerializer(data=request.data)
 
-    if serializer.is_valid():
-        serializer.save()
-        return Response({"message": "Data saved successfully"}, status=status.HTTP_201_CREATED)
+    if serializer.is_valid(): 
+        saved_data = serializer.save()
+        return Response({"message": "Data saved successfully",
+                          "saved_data": SensorDataSerializer(saved_data).data}, status=status.HTTP_201_CREATED)
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+def get_weather(request):
+    city = "Milwaukee"
+    url = f"https://api.openweathermap.org/data/2.5/weather?q={city}&appid={settings.OPENWEATHER_API_KEY}&units=imperial"
+
+    
+    response = requests.get(url)
+    data = response.json()
+
+    return JsonResponse({
+        "temperature": data["main"]["temp"],
+        "humidity": data["main"]["humidity"],
+        "weather": data["weather"][0]["description"]
+    })
+
+@api_view(['GET'])
+def get_sensor_data(request):
+    sensor_data = SensorData.objects.all().order_by('-timestamp')[:100]
+    serializer = SensorDataSerializer(sensor_data, many=True)
+    return Response(serializer.data)
