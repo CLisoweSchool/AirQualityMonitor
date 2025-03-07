@@ -2,7 +2,6 @@ from rest_framework import serializers
 from .models import SensorData
 
 class SensorDataSerializer(serializers.ModelSerializer):
-    # Define required fields explicitly
     co2 = serializers.FloatField(required=True)
     humidity = serializers.FloatField(required=True)
     pm1_0 = serializers.FloatField(required=False, allow_null=True)

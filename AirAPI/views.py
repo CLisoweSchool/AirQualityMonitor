@@ -5,6 +5,10 @@ from .models import SensorData
 from .serializers import SensorDataSerializer
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+import requests 
+from django.http import JsonResponse
+from django.conf import settings
+
 
 @api_view(['GET'])
 def air_quality_data(request):
@@ -36,7 +40,6 @@ def receive_sensor_data(request):
         saved_data = serializer.save()
         return Response({"message": "Data saved successfully",
                           "saved_data": SensorDataSerializer(saved_data).data}, status=status.HTTP_201_CREATED)
-
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
